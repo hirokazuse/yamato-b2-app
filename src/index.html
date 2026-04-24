@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B2販売管理システム</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #ddd;
+    }
+
+    .nav-tabs button {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      color: #666;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.3s;
+    }
+
+    .nav-tabs button.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+    }
+
+    .nav-tabs button:hover {
+      color: #667eea;
+    }
+
+    .content {
+      display: none;
+    }
+
+    .content.active {
+      display: block;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .stat-card .label {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .form-section {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .form-section h2 {
+      font-size: 16px;
+      margin-bottom: 15px;
+      color: #333;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #555;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .items-section {
+      margin-top: 20px;
+    }
+
+    .items-section h3 {
+      font-size: 14px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .item-row {
+      display: grid;
+      grid-template-columns: 300px 80px 80px 100px 40px;
+      gap: 10px;
+      margin-bottom: 10px;
+      align-items: end;
+    }
+
+    .item-row input {
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .item-row button {
+      padding: 8px 12px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .item-row button:hover {
+      background: #c0392b;
+    }
+
+    .add-item-btn {
+      padding: 8px 16px;
+      background: #27ae60;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      margin-top: 10px;
+    }
+
+    .add-item-btn:hover {
+      background: #229954;
+    }
+
+    .summary {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 15px;
+      text-align: right;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .summary-row .label {
+      width: 100px;
+      text-align: right;
+      margin-right: 20px;
+    }
+
+    .summary-row .value {
+      width: 100px;
+      text-align: right;
+      font-weight: bold;
+    }
+
+    .summary-row.total {
+      border-top: 2px solid #ddd;
+      padding-top: 10px;
+      font-size: 16px;
+      color: #667eea;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #5568d3;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-success {
+      background: #27ae60;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #229954;
+    }
+
+    .btn-secondary {
+      background: #95a5a6;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #7f8c8d;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .history-table thead {
+      background: #f5f5f5;
+      border-bottom: 2px solid #ddd;
+    }
+
+    .history-table th {
+      padding: 12px;
+      text-align: left;
+      font-weight: 600;
+      color: #555;
+    }
+
+    .history-table td {
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .history-table tr:hover {
+      background: #fafafa;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .status-paid {
+      background: #d5f4e6;
+      color: #27ae60;
+    }
+
+    .status-pending {
+      background: #fef5e7;
+      color: #f39c12;
+    }
+
+    .error {
+      background: #fadbd8;
+      color: #c0392b;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: 13px;
+    }
+
+    .success {
+      background: #d5f4e6;
+      color: #27ae60;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 15px;
+      font-size: 13px;
+    }
+
+    .quick-input-wrapper input {
+      font-size: 18px;
+      padding: 12px;
+    }
+
+    #quickProductCode {
+      font-size: 24px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🌍 アジアンネットショップラマニ B2販売管理システム</h1>
+      <p>Facebook Messengerからの注文を一元管理。ヤマトB2との連携で送り状・納品書を自動生成</p>
+    </header>
+
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-tab="dashboard">📊 ダッシュボード</button>
+      <button class="tab-btn" data-tab="quick">⚡ クイック売上</button>
+      <button class="tab-btn" data-tab="input">📝 新規入力</button>
+      <button class="tab-btn" data-tab="history">📋 履歴</button>
+      <button class="tab-btn" data-tab="export">📤 CSV出力</button>
+    </div>
+
+    <!-- ダッシュボード -->
+    <div class="content active" id="dashboard">
+      <div class="stats">
+        <div class="stat-card">
+          <div class="label">本日の出荷</div>
+          <div class="value" id="todayCount">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">本日の売上</div>
+          <div class="value" id="todayTotal">¥0</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">今月の出荷</div>
+          <div class="value" id="monthCount">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">今月の売上</div>
+          <div class="value" id="monthTotal">¥0</div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h2>最近の出荷（過去10件）</h2>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>日付</th>
+              <th>番号</th>
+              <th>顧客名</th>
+              <th>金額</th>
+              <th>方法</th>
+            </tr>
+          </thead>
+          <tbody id="recentSalesBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- クイック売上 -->
+    <div class="content" id="quick">
+      <div class="stats">
+        <div class="stat-card">
+          <div class="label">本日の売上件数</div>
+          <div class="value" id="quickTodayCount">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="label">本日の売上合計</div>
+          <div class="value" id="quickTodayTotal">¥0</div>
+        </div>
+      </div>
+
+      <div class="form-section" style="text-align: center; padding: 40px;">
+        <input type="text" id="scanInput" 
+               autofocus 
+               autocomplete="off"
+               placeholder="スキャン待ち..."
+               style="font-size: 32px; padding: 20px; text-align: center; width: 100%; max-width: 500px;">
+        
+        <input type="text" id="productNameInput" 
+               readonly
+               placeholder="商品名"
+               style="font-size: 24px; padding: 15px; text-align: center; width: 100%; max-width: 500px; margin-top: 10px; background: #f9f9f9;">
+        
+        <input type="number" id="priceInput" 
+               value="0"
+               placeholder="価格"
+               style="font-size: 24px; padding: 15px; text-align: center; width: 100%; max-width: 500px; margin-top: 10px; background: #f9f9f9;">
+        
+        <div id="scanResult" style="margin-top: 20px; font-size: 24px; font-weight: bold; height: 40px;"></div>
+        
+        <p style="color: #999; font-size: 12px; margin-top: 20px;">
+          Enter: 商品コード→確定 / 商品名→確定 で登録＆売上記録
+        </p>
+      </div>
+
+      <div class="form-section">
+        <h2>クイック売上履歴（最新5件）</h2>
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>時刻</th>
+              <th>商品コード</th>
+              <th>商品名</th>
+              <th>金額</th>
+            </tr>
+          </thead>
+          <tbody id="quickHistoryBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 新規入力 -->
+    <div class="content" id="input">
+      <div id="inputMessage"></div>
+
+      <form id="inputForm">
+        <!-- 顧客情報 -->
+        <div class="form-section">
+          <h2>顧客情報</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label>顧客名 *</label>
+              <input type="text" id="customerName" required>
+            </div>
+            <div class="form-group">
+              <label>電話番号 *</label>
+              <input type="text" id="phone" placeholder="09012345678" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>郵便番号 *</label>
+              <input type="text" id="postalCode" placeholder="1234567" required>
+            </div>
+            <div class="form-group">
+              <label>都道府県 *</label>
+              <select id="prefecture" required>
+                <option value="">選択してください</option>
+                <option value="北海道">北海道</option>
+                <option value="青森県">青森県</option>
+                <option value="岩手県">岩手県</option>
+                <option value="宮城県">宮城県</option>
+                <option value="秋田県">秋田県</option>
+                <option value="山形県">山形県</option>
+                <option value="福島県">福島県</option>
+                <option value="茨城県">茨城県</option>
+                <option value="栃木県">栃木県</option>
+                <option value="群馬県">群馬県</option>
+                <option value="埼玉県">埼玉県</option>
+                <option value="千葉県">千葉県</option>
+                <option value="東京都">東京都</option>
+                <option value="神奈川県">神奈川県</option>
+                <option value="新潟県">新潟県</option>
+                <option value="富山県">富山県</option>
+                <option value="石川県">石川県</option>
+                <option value="福井県">福井県</option>
+                <option value="山梨県">山梨県</option>
+                <option value="長野県">長野県</option>
+                <option value="岐阜県">岐阜県</option>
+                <option value="静岡県">静岡県</option>
+                <option value="愛知県">愛知県</option>
+                <option value="三重県">三重県</option>
+                <option value="滋賀県">滋賀県</option>
+                <option value="京都府">京都府</option>
+                <option value="大阪府">大阪府</option>
+                <option value="兵庫県">兵庫県</option>
+                <option value="奈良県">奈良県</option>
+                <option value="和歌山県">和歌山県</option>
+                <option value="鳥取県">鳥取県</option>
+                <option value="島根県">島根県</option>
+                <option value="岡山県">岡山県</option>
+                <option value="広島県">広島県</option>
+                <option value="山口県">山口県</option>
+                <option value="徳島県">徳島県</option>
+                <option value="香川県">香川県</option>
+                <option value="愛媛県">愛媛県</option>
+                <option value="高知県">高知県</option>
+                <option value="福岡県">福岡県</option>
+                <option value="佐賀県">佐賀県</option>
+                <option value="長崎県">長崎県</option>
+                <option value="熊本県">熊本県</option>
+                <option value="大分県">大分県</option>
+                <option value="宮崎県">宮崎県</option>
+                <option value="鹿児島県">鹿児島県</option>
+                <option value="沖縄県">沖縄県</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="grid-column: span 2;">
+              <label>市区町村 *</label>
+              <input type="text" id="city" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group" style="grid-column: span 2;">
+              <label>番地 *</label>
+              <input type="text" id="address" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- 商品情報 -->
+        <div class="form-section">
+          <h2>商品情報</h2>
+          <div class="items-section">
+            <div id="itemsContainer"></div>
+            <button type="button" class="add-item-btn" id="addItemBtn">+ 商品を追加</button>
+          </div>
+
+          <!-- 合計 -->
+          <div class="summary">
+            <div class="summary-row">
+              <div class="label">小計</div>
+              <div class="value" id="subtotal">¥0</div>
+            </div>
+            <div class="summary-row">
+              <div class="label">消費税（10%）</div>
+              <div class="value" id="tax">¥0</div>
+            </div>
+            <div class="summary-row total">
+              <div class="label">合計金額</div>
+              <div class="value" id="totalAmount">¥0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 配送情報 -->
+        <div class="form-section">
+          <h2>配送情報</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label>配送方法 *</label>
+              <select id="shippingMethod" required>
+                <option value="">選択してください</option>
+                <option value="発払い">発払い</option>
+                <option value="コレクト">コレクト（代金引換）</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>メモ</label>
+              <input type="text" id="memo" placeholder="特記事項があれば入力">
+            </div>
+          </div>
+        </div>
+
+        <!-- ボタン -->
+        <div class="button-group">
+          <button type="reset" class="btn btn-secondary">クリア</button>
+          <button type="submit" class="btn btn-primary">確認</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 履歴 -->
+    <div class="content" id="history">
+      <div class="form-section">
+        <h2>履歴検索</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label>開始日</label>
+            <input type="date" id="filterStartDate">
+          </div>
+          <div class="form-group">
+            <label>終了日</label>
+            <input type="date" id="filterEndDate">
+          </div>
+          <div class="form-group">
+            <label>顧客名</label>
+            <input type="text" id="filterCustomerName" placeholder="検索キーワード">
+          </div>
+          <div class="form-group">
+            <button type="button" class="btn btn-primary" id="searchBtn">検索</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>日付</th>
+              <th>番号</th>
+              <th>顧客名</th>
+              <th>商品</th>
+              <th>数量</th>
+              <th>金額</th>
+              <th>方法</th>
+            </tr>
+          </thead>
+          <tbody id="historyTableBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CSV出力 -->
+    <div class="content" id="export">
+      <div class="form-section">
+        <h2>CSV出力</h2>
+        <div class="form-row">
+          <div class="form-group">
+            <label>開始日</label>
+            <input type="date" id="exportStartDate">
+          </div>
+          <div class="form-group">
+            <label>終了日</label>
+            <input type="date" id="exportEndDate">
+          </div>
+        </div>
+        <div class="button-group">
+          <button type="button" class="btn btn-primary" id="exportB2Btn">📥 ヤマトB2用CSV</button>
+          <button type="button" class="btn btn-success" id="exportFullBtn">📥 全項目CSV</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

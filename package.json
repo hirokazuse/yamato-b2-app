@@ -1,0 +1,27 @@
+{
+  "name": "yamato-b2-app",
+  "version": "1.0.0",
+  "description": "アジアンネットショップラマニ B2販売管理システム",
+  "main": "main.js",
+  "scripts": {
+    "dev": "electron .",
+    "build": "electron-builder"
+  },
+  "dependencies": {
+    "csv-writer": "^1.6.0",
+    "date-fns": "^2.30.0",
+    "pdfkit": "^0.13.0",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "electron": "latest",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.yamato.b2",
+    "productName": "YamatoB2App",
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
